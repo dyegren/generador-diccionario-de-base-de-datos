@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script id="devbrary" src="https://cdn.jsdelivr.net/gh/yosoymitxel/devbrary-js-test-library@master/devbrary2.js"></script>
+    <style id="dev-css-main">
+        textarea{
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="p-2">
+<form id="FormularioSQL" onsubmit="return generarDiccionario()" class="form row justify-content-center">
+    <div class="text-center col-12 col-sm-4 col-xl-3">
+        <div class="form-group">
+            <label for="tabla"><h3>Ingrese el nombre de la tabla</h3></label>
+            <input type="text" class="form-control" id="tabla" value="usuarios">
+        </div>
+        <div class="form-group">
+            <label for="sql"><h3>Ingrese los atributos <br>"CREATE TABLE"</h3></label>
+            <textarea class="form-control" name="" id="sql" cols="30" rows="10">
+    id_usuario               INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_tipo_usuario          INT NOT NULL,
+    id_det_usuario           INT NOT NULL,
+    nombre                   VARCHAR(50),
+    user                     VARCHAR(50),
+    email                    VARCHAR(50),
+    pass                     VARCHAR(50),
+    pais                     VARCHAR(50),
+    direccion                VARCHAR(50),
+    telefono                 VARCHAR(15),
+    cedula                   VARCHAR(15),
+    fecha_insercion_usuarios TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (id_tipo_usuario) REFERENCES tipo_usuarios (id_tipo_usuario),
+    FOREIGN KEY (id_det_usuario) REFERENCES det_usuarios (id_det_usuario)
+</textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Generar</button>
+        </div>
+    </div>
+</form>
+
+<div class="row text-center mb-5" id="Resultados">
+    <div class="col-12">
+        <h3>Resultados</h3>
+    </div>
+    <div id="Campo" class="col-3">
+        <h4>Campo</h4>
+        <textarea class="form-control w-100" name="" id="CampoTexto" cols="30" rows="10"></textarea>
+    </div>
+
+    <div id="Tamanio" class="col-3">
+        <h4>Tamaño</h4>
+        <textarea class="form-control w-100" name="" id="TamanioTexto" cols="30" rows="10"></textarea>
+    </div>
+    <div id="Tipo" class="col-3">
+        <h4>Tipo</h4>
+        <textarea class="form-control w-100" name="" id="TipoTexto" cols="30" rows="10"></textarea>
+    </div>
+    <div id="Descripcion" class="col-3">
+        <h4>Descripción</h4>
+        <textarea class="form-control w-100" name="" id="DescripcionTexto" cols="30" rows="10"></textarea>
+    </div>
+    <div id="Claves" class="col-6">
+        <h4>Campos Claves</h4>
+        <textarea class="form-control w-100" name="" id="ClavesTexto" cols="30" rows="10"></textarea>
+    </div>
+    <div id="Relaciones" class="col-6">
+        <h4>Relaciones</h4>
+        <textarea class="form-control w-100" name="" id="RelacionesTexto" cols="30" rows="10"></textarea>
+    </div>
+</div>
+
+</body>
+
+<script>
+    function generarDiccionario() {
+        let valorSQL = ($('#sql').val()).split('\n')
+        var campoResul='',tipoResul='',tamanioResul='',descripcionResul='', claveResult ='', relacionesResult='';
+        let tabla = $('#tabla').val()
+        var_dump(valorSQL)
+        for(let linea of valorSQL){
+            echo(dev_test_contador_automatico())
+            var_dump(linea)
+            if(dev_is_string(linea,3)){
+                let lineaConUnEspacio = dev_str_quitar_espacios_extra(linea)
+                let lineaArray = lineaConUnEspacio.split(/[\s]/)
+                let tipo = '', tamanio = ''
+
+                //echo(lineaArray)
+
+                /* Tamaño */
+                if(dev_str_incluye_reg(lineaArray[1],/\([\s\d]+\)[\s,]+?/)){
+                    tamanio = dev_str_conseguir_numero_string(lineaArray[1])
+                    tipo    = dev_str_reemplazar_expresion_regular(lineaArray[1],/\([\s\d]+\)[\s,]+?/,'')
+                }else{
+                    tipo = lineaArray[1]
+                }
+
+                let lineaMin = linea.toLocaleLowerCase()
+                if(!lineaMin.includes('foreign key')){
+                    campoResul       += lineaArray[0]+'\n'
+                    tipoResul        += tipo+'\n'
+                    tamanioResul     += tamanio+'\n'
+                }else{
+                    echo('Línea: ')
+                }
+
+                if(linea.includes('primary key') || linea.includes('PRIMARY KEY')){
+                    descripcionResul += lineaArray[0]+' es la clave primaria de la tabla '+tabla+'\n'
+                    claveResult += lineaArray[0]+', '
+                }else if(linea.includes('id') && (linea.includes('NOT NULL') || linea.includes('not null'))  && (!linea.includes('foreign key') || !linea.includes('FOREIGN KEY'))){
+                    descripcionResul += lineaArray[0]+' está relacionada con la tabla COMPLETAR\n'
+                }else if(linea.includes('FOREIGN KEY') || linea.includes('foreign key')){
+                    claveResult += lineaArray[2]+', '
+                    let partesForeign = linea.split(')')
+                    let referencia    = dev_str_reemplazar_expresion_regular(partesForeign[1],/(\s)+?(REFERENCES|references)[\s]+?/)
+                    partesForeign     = referencia.split('(')
+                    relacionesResult += ((lineaArray[2]+' se relaciona con la tabla '+partesForeign[0]+'\n').replace('undefined','')).replace(/[\(\)]/g,'')
+                }else{
+                    descripcionResul += 'Es el '+dev_str_reemplazar_expresion_regular(lineaArray[0],'_',' ')+' del '+dev_str_reemplazar_expresion_regular(dev_str_primera_letra_mayuscula(tabla.substring(0,(tabla).length-1)),'_',' ')+'\n'
+                }
+                var_dump(lineaArray[0])
+
+
+            }
+            echo('------------------------------------------------')
+
+        }
+
+        var_dump(campoResul)
+        var_dump(tipoResul)
+        var_dump(tamanioResul)
+        var_dump(descripcionResul)
+        $('#CampoTexto').val(campoResul)
+        $('#TipoTexto').val(tipoResul)
+        $('#TamanioTexto').val(tamanioResul)
+        $('#DescripcionTexto').val(descripcionResul)
+        $('#RelacionesTexto').val(relacionesResult)
+        $('#ClavesTexto').val('Campos claves: '+claveResult.substring(0,(claveResult).length-2).replace(/[\(\)]/g,''))
+        return false;
+    }
+    $('#Resultados textarea').click(function (index) {
+        let obj = index.currentTarget
+        dev_dom_copiar_en_portapapeles_attr_elemento($(obj).attr('id'),'val')
+
+    })
+</script>
+</html>
+
+
+
