@@ -1340,9 +1340,6 @@ return dev_str_quitar_espacios_extra(t);
 
         /*------------CORRECCIÓN FINAL DE CAMPOS------------*/
 
-        /* Limpieza de titulo */
-        lineaArray[0]         = dev_str_reemplazar_expresion_regular(lineaArray[0],'[\\\'\\"\\`]+','')
-
         /* Inclusión de tablas relacionadas en descripción */
         for(let i=0;i<arrayRelaResult.length;i++){
             descripcionResul = dev_str_reemplazar_expresion_regular(descripcionResul,'COMPLETAR'+i,arrayRelaResult[i])
@@ -1350,6 +1347,12 @@ return dev_str_quitar_espacios_extra(t);
 
         /* UpperCase para la tabla de tipo de dato*/
         tipoResul = tipoResul.toUpperCase()
+
+        /* Limpieza de titulo */
+        campoResul       = dev_str_reemplazar_expresion_regular(campoResul,'[\\\'\\"\\`]+','')
+        descripcionResul = dev_str_reemplazar_expresion_regular(descripcionResul,'[\\\'\\"\\`]+','')
+        relacionesResult = dev_str_reemplazar_expresion_regular(relacionesResult,'[\\\'\\"\\`]+','')
+        claveResult      = dev_str_reemplazar_expresion_regular(claveResult,'[\\\'\\"\\`]+','')
 
         /*---TEST: RESULTADOS FINALES---*/
         var_dump(campoResul)
